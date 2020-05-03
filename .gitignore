@@ -1,2 +1,4 @@
 # Distribution / packaging
+.idea/
 *.data
+*.xml

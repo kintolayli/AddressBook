@@ -1,9 +1,20 @@
 import pickle
 import sys
-import os.path
+import os
 
 AB_DATA = 'address_book.data'
 PATH_DATA = os.getcwd() + os.sep + AB_DATA
+MESSAGE = '''when you first run this program, you must add one command-line argument:
+
+add - add new contact
+show - show all contacts, which you have
+how_many - how many contacts you have
+find - find contact by first name, or last name
+edit - edit contact
+del - delete contact
+
+for example: (run in command prompt) - python3 address_book add  
+'''
 
 
 class Person:
@@ -14,7 +25,6 @@ class Person:
         self.address = address
 
     def introduce_myself(self):
-        #  print(f'ID: {self.person_id} Имя: {self.first_name} Фамилия: {self.last_name} Адрес: {self.address}')
         print(f'ID{self.person_id} {self.first_name} {self.last_name} Адрес: {self.address}')
 
     def edit(self, new_first_name, new_last_name, new_address):
@@ -22,12 +32,10 @@ class Person:
             self.first_name = self.first_name
         else:
             self.first_name = new_first_name
-
         if new_last_name == '':
             self.last_name = self.last_name
         else:
             self.last_name = new_last_name
-
         if new_address == '':
             self.address = self.address
         else:
@@ -55,7 +63,6 @@ def iteration_id():
         if data != {}:
             list_keys = list(data.keys())
             list_keys.sort(reverse=True)
-
             return list_keys[0] + 1
         else:
             return 0
@@ -83,10 +90,9 @@ def del_person_in_data(data, person):
 
 
 def add_person():
-    print('Режим добавления контакта')
-    first_name = input('Введите имя:\n')
-    last_name = input('Введите фамилию:\n')
-    address = input('Введите адрес:\n')
+    first_name = input('Enter first name:\n')
+    last_name = input('Enter last name:\n')
+    address = input('Enter address:\n')
     if os.path.exists(PATH_DATA):
         data = load_data()
         append_person_to_data(data, first_name, last_name, address)
@@ -94,7 +100,7 @@ def add_person():
         data = {}
         append_person_to_data(data, first_name, last_name, address)
     print()
-    print('Контакт добавлен')
+    print('Contact added')
 
 
 def show_person():
@@ -104,41 +110,41 @@ def show_person():
             for value in data.values():
                 value.introduce_myself()
         else:
-            print('У вас нет контактов.')
+            print('You don\'t have any contacts.')
     else:
-        print('У вас нет контактов.')
+        print('You don\'t have any contacts.')
 
 
 def edit_person():
     if os.path.exists(PATH_DATA):
         data = load_data()
         if data != {}:
-            find_person('Введите имя или фамилию контакта, который хотите изменить:\n')
-            find_object = int(input('Введите ID:'))
+            find_person('Enter contact\'s first name, or last name, which you will want to change:\n')
+            find_object = int(input('Enter ID:'))
             person = data.get(find_object)
             if person is not None:
-                new_first_name = input(f'Введите новое имя контакта(старое имя: {person.first_name}):  ')
-                new_last_name = input(f'Введите новую фамилию контакта(старая фамилия: {person.last_name}):  ')
-                new_address = input(f'Введите новый адрес контакта(старая адрес: {person.address}):  ')
+                new_first_name = input(f'Enter new first name (old first name: {person.first_name}):  ')
+                new_last_name = input(f'Enter new last name (old last name: {person.last_name}):  ')
+                new_address = input(f'Enter new address (old address: {person.address}):  ')
                 person.edit(new_first_name, new_last_name, new_address)
                 edit_person_in_data(data, person)
             else:
-                print(f'Контакта с ID{find_object} не существует.')
+                print(f'Contact with ID{find_object} not exist.')
         else:
-            print('У вас нет контактов.')
+            print('You don\'t have any contacts.')
     else:
-        print('У вас нет контактов.')
+        print('You don\'t have any contacts.')
 
 
 def how_many_person():
     if os.path.exists(PATH_DATA):
         data = load_data()
         if data != {}:
-            print(f'У вас {len(data)} контактов.')
+            print(f'You have {len(data)} contacts.')
         else:
-            print('У вас нет контактов.')
+            print('You don\'t have any contacts.')
     else:
-        print('У вас нет контактов.')
+        print('You don\'t have any contacts.')
 
 
 def find_person(search_phrase):
@@ -149,51 +155,51 @@ def find_person(search_phrase):
             for value in data.values():
                 value.find_match(find_object)
         else:
-            print('У вас нет контактов.')
+            print('You don\'t have any contacts.')
     else:
-        print('У вас нет контактов.')
+        print('You don\'t have any contacts.')
 
 
 def del_person():
     if os.path.exists(PATH_DATA):
         data = load_data()
         if data != {}:
-            find_person('Введите имя или фамилию контакта, который хотите удалить:\n')
-            find_object = int(input('Введите ID:'))
+            find_person('Enter contact\'s first name, or last name, which you will want to delete:\n')
+            find_object = int(input('Enter ID:'))
             person = data[find_object]
             if person is not None:
                 del_person_in_data(data, person)
-                print(f'Контакт {person.first_name} {person.last_name} удален.')
+                print(f'Contact {person.first_name} {person.last_name} was deleted.')
             else:
-                print(f'Контакта с ID{find_object} не существует.')
+                print(f'Contact with ID{find_object} not exist.')
         else:
-            print('У вас нет контактов.')
+            print('You don\'t have any contacts.')
     else:
-        print('У вас нет контактов.')
+        print('You don\'t have any contacts.')
 
 
-#  person1 = add_person('Игорь', 'Верник', 'ул. Маршала бирюзова д.8 кв. 147')
-#  person2 = add_person('Владимир', 'Курчатов', 'ул. Малого Синяка д.3 кв. 35')
-#  person3 = add_person('Денис', 'Ткаченко', 'ул. Третьяка д.24 кв. 97')
-#  person4 = add_person('Виктор', 'Жардиев', 'ул. Сезонная д.1 кв. 4')
-#  person1.introduce_myself()
+def main():
+    if len(sys.argv) == 1:
+        print(MESSAGE)
 
-#  edit_person()
+    elif sys.argv[1] == 'add':
+        add_person()
 
-if sys.argv[1] == 'add':
-    add_person()
+    elif sys.argv[1] == 'show':
+        show_person()
 
-if sys.argv[1] == 'show':
-    show_person()
+    elif sys.argv[1] == 'how_many':
+        how_many_person()
 
-if sys.argv[1] == 'how_many':
-    how_many_person()
+    elif sys.argv[1] == 'find':
+        find_person('Enter a search term:\n')
 
-if sys.argv[1] == 'find':
-    find_person('Введите слово для поиска:\n')
+    elif sys.argv[1] == 'edit':
+        edit_person()
 
-if sys.argv[1] == 'edit':
-    edit_person()
+    elif sys.argv[1] == 'del':
+        del_person()
 
-if sys.argv[1] == 'del':
-    del_person()
+
+if __name__ == '__main__':
+    main()
